@@ -1,0 +1,1 @@
+# vocadb-rankings-generator
