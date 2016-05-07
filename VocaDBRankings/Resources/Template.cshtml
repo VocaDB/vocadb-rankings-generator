@@ -41,7 +41,7 @@
 									<br />
 									@song.ArtistString
 									<br />
-									@foreach (PVContract pv in song.PVs) {
+									@foreach (PVContract pv in Model.GetMainPVs(song)) {
 										<a href="@pv.Url" title="@pv.Service">
 											@if (pv.Service == PVService.Youtube) {
 												<img src="youtube.png" />
@@ -80,7 +80,7 @@
 								<br />
 								@song.ArtistString
 								<br />
-								@foreach (PVContract pv in song.PVs) {
+								@foreach (PVContract pv in Model.GetMainPVs(song)) {
 									<a href="@pv.Url" title="@pv.Service">
 										@if (pv.Service == PVService.Youtube) {
 											<img src="youtube.png" />
