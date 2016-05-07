@@ -7,11 +7,12 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
-	<meta name="description" content="Vocaloid/UTAU rankings by VocaDB." />
-	<title>Vocaloid/UTAU rankings by VocaDB</title>
+	<meta name="description" content="Weekly Vocaloid/UTAU rankings generated from VocaDB" />
+	<title>Vocaloid/UTAU rankings for week @Model.WeekNumber</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="vocarankings.css" />
+	<link rel="stylesheet" href="content/vocarankings.css" />
+	<link rel="shortcut icon" href="content/favicon.ico" type="image/x-icon" />
 </head>
 <body>
 	<div class="container">
@@ -42,7 +43,7 @@
 									<br />
 									@foreach (PVContract pv in Model.GetMainPVs(song)) {
 										<a href="@pv.Url" title="@pv.Service">
-											<img src="@Model.GetServiceIcon(pv.Service)" />
+											<img src="content/icons/@Model.GetServiceIcon(pv.Service)" />
 										</a>
 									}
 								</td>
@@ -76,7 +77,7 @@
 								<br />
 								@foreach (PVContract pv in Model.GetMainPVs(song)) {
 									<a href="@pv.Url" title="@pv.Service">
-										<img src="@Model.GetServiceIcon(pv.Service)" />
+										<img src="content/icons/@Model.GetServiceIcon(pv.Service)" />
 									</a>
 								}
 							</td>

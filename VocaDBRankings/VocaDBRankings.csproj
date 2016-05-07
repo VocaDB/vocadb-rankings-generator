@@ -85,7 +85,14 @@
     <EmbeddedResource Include="Resources\Template.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\vocarankings.css" />
+    <Content Include="Resources\content\favicon.ico" />
+    <Content Include="Resources\content\icons\bilibili.png" />
+    <Content Include="Resources\content\icons\nico.png" />
+    <Content Include="Resources\content\icons\piapro.png" />
+    <Content Include="Resources\content\icons\soundcloud.png" />
+    <Content Include="Resources\content\icons\vimeo.png" />
+    <Content Include="Resources\content\icons\youtube.png" />
+    <Content Include="Resources\content\vocarankings.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
