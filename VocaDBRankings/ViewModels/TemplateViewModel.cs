@@ -26,6 +26,27 @@ namespace VocaDBRankings.ViewModels {
 
 		}
 
+		public string GetServiceIcon(PVService service) {
+
+			switch (service) {
+				case PVService.Bilibili:
+					return "bilbili.png";
+				case PVService.NicoNicoDouga:
+					return "nico.png";
+				case PVService.Piapro:
+					return "piapro.png";
+				case PVService.SoundCloud:
+					return "soundcloud.png";
+				case PVService.Youtube:
+					return "youtube.png";
+				case PVService.Vimeo:
+					return "vimeo.png";
+			}
+
+			return string.Empty;
+
+		}
+
 		public SongForApiContract[] OtherSongs { get; set; }
 
 		public SongForApiContract[] TopRatedSongs { get; set; }

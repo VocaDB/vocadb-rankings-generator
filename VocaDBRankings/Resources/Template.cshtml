@@ -11,8 +11,7 @@
 	<title>Vocaloid/UTAU rankings by VocaDB</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<style media="screen" type="text/css">
-	</style>
+	<link rel="stylesheet" href="vocarankings.css" />
 </head>
 <body>
 	<div class="container">
@@ -43,12 +42,7 @@
 									<br />
 									@foreach (PVContract pv in Model.GetMainPVs(song)) {
 										<a href="@pv.Url" title="@pv.Service">
-											@if (pv.Service == PVService.Youtube) {
-												<img src="youtube.png" />
-											}
-											@if (pv.Service == PVService.NicoNicoDouga) {
-												<img src="nico.png" />
-											}
+											<img src="@Model.GetServiceIcon(pv.Service)" />
 										</a>
 									}
 								</td>
@@ -82,12 +76,7 @@
 								<br />
 								@foreach (PVContract pv in Model.GetMainPVs(song)) {
 									<a href="@pv.Url" title="@pv.Service">
-										@if (pv.Service == PVService.Youtube) {
-											<img src="youtube.png" />
-										}
-										@if (pv.Service == PVService.NicoNicoDouga) {
-											<img src="nico.png" />
-										}
+										<img src="@Model.GetServiceIcon(pv.Service)" />
 									</a>
 								}
 							</td>
