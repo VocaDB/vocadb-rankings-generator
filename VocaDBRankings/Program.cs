@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using RazorEngine;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
 using VocaDBRankings.DataContracts;
 using VocaDBRankings.Resources;
+using VocaDBRankings.ViewModels;
 
 namespace VocaDBRankings {
 
@@ -17,7 +22,8 @@ namespace VocaDBRankings {
 		static void Main(string[] args) {
 
 			Console.WriteLine("Getting rankings from VocaDB.");
-			RunAsync().Wait();
+			Run();
+			//RunAsync().Wait();
 
 		}
 
@@ -37,7 +43,7 @@ namespace VocaDBRankings {
 			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
 		}
 
-		private static async Task RunAsync() {
+		private static void Run() {
 
 			using (var client = new HttpClient()) {
 
@@ -45,41 +51,33 @@ namespace VocaDBRankings {
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				var response = await client.GetAsync("api/songs/top-rated");
+				var clientTask = client.GetAsync("api/songs/top-rated");
+				clientTask.Wait();
+				var response = clientTask.Result;
 				response.EnsureSuccessStatusCode();
 
-				var songs = await response.Content.ReadAsAsync<SongForApiContract[]>();
+				var responseTask = response.Content.ReadAsAsync<SongForApiContract[]>();
+				responseTask.Wait();
+				var songs = responseTask.Result;
 
 				var topSongs = songs.Take(3);
 				var otherSongs = songs.Skip(3);
+				var weekNum = GetIso8601WeekOfYear(DateTime.Now);
 
 				Console.WriteLine("Generating document.");
 
-				var template = ResourceHelper.ReadTextFile("Template.html");
-				var doc = new HtmlDocument();
-				doc.LoadHtml(template);
+				var viewModel = new TemplateViewModel { TopRatedSongs = topSongs.ToArray(), OtherSongs = otherSongs.ToArray(), WeekNumber = weekNum };
 
-				var weekNum = doc.GetElementbyId("weekNumber");
-				weekNum.InnerHtml = GetIso8601WeekOfYear(DateTime.Now).ToString();
+				var config = new TemplateServiceConfiguration();
+				config.CachingProvider = new DefaultCachingProvider(t => { });
+				var service = RazorEngineService.Create(config);
+				Engine.Razor = service;
+				var template = ResourceHelper.ReadTextFile("Template.cshtml");
+				var html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
 
-				var generatedAt = doc.GetElementbyId("generatedAt");
-				generatedAt.InnerHtml = DateTime.Now.ToString();
-
-				var topRatedSongsTable = doc.GetElementbyId("topRatedSongs");
-
-				foreach (var song in topSongs) {
-
-					var div = topRatedSongsTable.AppendChild(doc.CreateElement("div"));
-					div.Attributes.Add("class", "span-4");
-
-
-				}
-
-				var otherSongsTable = doc.GetElementbyId("songsTable");
-
+				File.WriteAllText("C:\\Temp\\" + DateTime.Now.Year + "-" + weekNum + ".html", html, System.Text.Encoding.UTF8);
 
 			}
-
 
 		}
 

@@ -1,0 +1,68 @@
+﻿@using RazorEngine
+@using VocaDBRankings.DataContracts
+@inherits RazorEngine.Templating.TemplateBase<VocaDBRankings.ViewModels.TemplateViewModel>
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<meta name="description" content="Vocaloid/UTAU rankings by VocaDB." />
+	<title>Vocaloid/UTAU rankings by VocaDB</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<style media="screen" type="text/css">
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h2>
+			Vocaloid/UTAU rankings for week @Model.WeekNumber
+		</h2>
+
+		<div class="row">
+			@foreach (SongForApiContract song in Model.TopRatedSongs) {
+				<div class="col-md-4">
+					<h1>
+						@(System.Array.IndexOf(Model.TopRatedSongs, song) + 1)
+					</h1>
+					<p>
+						<a href="http://vocadb.net/S/@song.Id">
+							@song.Name by @song.ArtistString							
+						</a>
+					</p>
+					<p>
+						<a href="http://vocadb.net/S/@song.Id">
+							<img src="@song.ThumbUrl" />							
+						</a>
+					</p>
+				</div>
+			}
+		</div>
+
+		<div class="row">
+			<div class="span7">
+				<table class="table table-striped">
+					<tbody>
+						@foreach (SongForApiContract song in Model.OtherSongs) {
+						<tr>
+							<td width="30px">
+								<h1>@(System.Array.IndexOf(Model.OtherSongs, song) + 3)</h1>
+							</td>
+							<td width="80px">
+								<img width="70" height="70" src="@song.ThumbUrl" />
+							</td>
+							<td>
+								@song.Name<br />
+							</td>
+						</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<small>Generated on <span id="generatedAt"></span> based on <a href="http://vocadb.net">VocaDB</a>.</small>
+	</div>
+</body>
+</html>
