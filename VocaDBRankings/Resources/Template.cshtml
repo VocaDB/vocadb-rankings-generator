@@ -21,39 +21,75 @@
 		</h2>
 
 		<div class="row">
-			@foreach (SongForApiContract song in Model.TopRatedSongs) {
-				<div class="col-md-4">
-					<h1>
-						@(System.Array.IndexOf(Model.TopRatedSongs, song) + 1)
-					</h1>
-					<p>
-						<a href="http://vocadb.net/S/@song.Id">
-							@song.Name by @song.ArtistString							
-						</a>
-					</p>
-					<p>
-						<a href="http://vocadb.net/S/@song.Id">
-							<img src="@song.ThumbUrl" />							
-						</a>
-					</p>
-				</div>
-			}
+			<div class="span7">
+				<table class="table">
+					<tbody>
+						@foreach (SongForApiContract song in Model.TopRatedSongs) {
+							<tr>
+								<td width="30px">
+									<h1>@(System.Array.IndexOf(Model.TopRatedSongs, song) + 1)</h1>
+								</td>
+								<td width="140px">
+									<a href="http://vocadb.net/S/@song.Id">
+										<img width="130" src="@song.ThumbUrl" />										
+									</a>
+								</td>
+								<td>
+									<a href="http://vocadb.net/S/@song.Id">
+										@song.Name										
+									</a>
+									<br />
+									@song.ArtistString
+									<br />
+									@foreach (PVContract pv in song.PVs) {
+										<a href="@pv.Url" title="@pv.Service">
+											@if (pv.Service == PVService.Youtube) {
+												<img src="youtube.png" />
+											}
+											@if (pv.Service == PVService.NicoNicoDouga) {
+												<img src="nico.png" />
+											}
+										</a>
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 		</div>
 
 		<div class="row">
 			<div class="span7">
-				<table class="table table-striped">
+				<table class="table">
 					<tbody>
 						@foreach (SongForApiContract song in Model.OtherSongs) {
 						<tr>
 							<td width="30px">
-								<h1>@(System.Array.IndexOf(Model.OtherSongs, song) + 3)</h1>
+								<h1>@(System.Array.IndexOf(Model.OtherSongs, song) + 4)</h1>
 							</td>
 							<td width="80px">
-								<img width="70" height="70" src="@song.ThumbUrl" />
+								<a href="http://vocadb.net/S/@song.Id">
+									<img width="70" src="@song.ThumbUrl" />
+								</a>
 							</td>
 							<td>
-								@song.Name<br />
+								<a href="http://vocadb.net/S/@song.Id">
+									@song.Name									
+								</a>
+								<br />
+								@song.ArtistString
+								<br />
+								@foreach (PVContract pv in song.PVs) {
+									<a href="@pv.Url" title="@pv.Service">
+										@if (pv.Service == PVService.Youtube) {
+											<img src="youtube.png" />
+										}
+										@if (pv.Service == PVService.NicoNicoDouga) {
+											<img src="nico.png" />
+										}
+									</a>
+								}
 							</td>
 						</tr>
 						}

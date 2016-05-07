@@ -2,3 +2,4 @@ VocaDBRankings/bin/
 VocaDBRankings/obj/
 packages/
 *.suo
+*.user

@@ -22,8 +22,47 @@ namespace VocaDBRankings {
 		static void Main(string[] args) {
 
 			Console.WriteLine("Getting rankings from VocaDB.");
-			Run();
-			//RunAsync().Wait();
+
+			SongForApiContract[] songs;
+
+			using (var client = new HttpClient()) {
+
+				client.BaseAddress = new Uri("http://vocadb.net/");
+				client.DefaultRequestHeaders.Accept.Clear();
+				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+				var clientTask = client.GetAsync("api/songs/top-rated?durationHours=168&fields=AdditionalNames,ThumbUrl,Tags,PVs");
+				clientTask.Wait();
+				var response = clientTask.Result;
+				response.EnsureSuccessStatusCode();
+
+				var responseTask = response.Content.ReadAsAsync<SongForApiContract[]>();
+				responseTask.Wait();
+				songs = responseTask.Result;
+
+			}
+
+			var topSongs = songs.Take(3);
+			var otherSongs = songs.Skip(3);
+			var weekNum = GetIso8601WeekOfYear(DateTime.Now);
+
+			Console.WriteLine("Generating document.");
+
+			var viewModel = new TemplateViewModel { TopRatedSongs = topSongs.ToArray(), OtherSongs = otherSongs.ToArray(), WeekNumber = weekNum };
+
+			var config = new TemplateServiceConfiguration();
+			config.CachingProvider = new DefaultCachingProvider(t => { });
+			var service = RazorEngineService.Create(config);
+			Engine.Razor = service;
+			var template = ResourceHelper.ReadTextFile("Template.cshtml");
+			var html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
+
+			var folder = args.FirstOrDefault() ?? string.Empty;
+			var file = Path.Combine(folder, DateTime.Now.Year + "-" + weekNum + ".html");
+
+			Console.WriteLine("Writing to " + file);
+
+			File.WriteAllText(file, html, System.Text.Encoding.UTF8);
 
 		}
 
@@ -41,44 +80,6 @@ namespace VocaDBRankings {
 
 			// Return the week of our adjusted day
 			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-		}
-
-		private static void Run() {
-
-			using (var client = new HttpClient()) {
-
-				client.BaseAddress = new Uri("http://vocadb.net/");
-				client.DefaultRequestHeaders.Accept.Clear();
-				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				var clientTask = client.GetAsync("api/songs/top-rated");
-				clientTask.Wait();
-				var response = clientTask.Result;
-				response.EnsureSuccessStatusCode();
-
-				var responseTask = response.Content.ReadAsAsync<SongForApiContract[]>();
-				responseTask.Wait();
-				var songs = responseTask.Result;
-
-				var topSongs = songs.Take(3);
-				var otherSongs = songs.Skip(3);
-				var weekNum = GetIso8601WeekOfYear(DateTime.Now);
-
-				Console.WriteLine("Generating document.");
-
-				var viewModel = new TemplateViewModel { TopRatedSongs = topSongs.ToArray(), OtherSongs = otherSongs.ToArray(), WeekNumber = weekNum };
-
-				var config = new TemplateServiceConfiguration();
-				config.CachingProvider = new DefaultCachingProvider(t => { });
-				var service = RazorEngineService.Create(config);
-				Engine.Razor = service;
-				var template = ResourceHelper.ReadTextFile("Template.cshtml");
-				var html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
-
-				File.WriteAllText("C:\\Temp\\" + DateTime.Now.Year + "-" + weekNum + ".html", html, System.Text.Encoding.UTF8);
-
-			}
-
 		}
 
 	}
