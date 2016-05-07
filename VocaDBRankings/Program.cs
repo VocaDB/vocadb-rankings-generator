@@ -32,7 +32,7 @@ namespace VocaDBRankings {
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				var clientTask = client.GetAsync("api/songs/top-rated?durationHours=168&fields=AdditionalNames,ThumbUrl,Tags,PVs");
+				var clientTask = client.GetAsync("api/songs/top-rated?filterBy=PublishDate&durationHours=168&fields=AdditionalNames,ThumbUrl,Tags,PVs");
 				clientTask.Wait();
 				var response = clientTask.Result;
 				response.EnsureSuccessStatusCode();
@@ -59,13 +59,14 @@ namespace VocaDBRankings {
 			var html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
 
 			var folder = args.FirstOrDefault() ?? string.Empty;
-			var file = Path.Combine(folder, DateTime.Now.Year + "-" + weekNum + ".html");
+			var baseFileName = Path.Combine(folder, DateTime.Now.Year + "-" + weekNum);
+			var file = baseFileName + ".html";
 
 			Console.WriteLine("Writing to " + file);
 
 			File.WriteAllText(file, html, System.Text.Encoding.UTF8);
 
-			var jsonFile = Path.Combine(folder, DateTime.Now.Year + "-" + weekNum + ".json");
+			var jsonFile = baseFileName + ".json";
 			var json = JsonConvert.SerializeObject(songs, Formatting.Indented);
 			File.WriteAllText(jsonFile, json, System.Text.Encoding.UTF8);
 
