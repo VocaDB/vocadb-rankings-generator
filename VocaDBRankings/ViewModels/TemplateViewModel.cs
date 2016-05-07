@@ -30,7 +30,7 @@ namespace VocaDBRankings.ViewModels {
 
 			switch (service) {
 				case PVService.Bilibili:
-					return "bilbili.png";
+					return "bilibili.png";
 				case PVService.NicoNicoDouga:
 					return "nico.png";
 				case PVService.Piapro:

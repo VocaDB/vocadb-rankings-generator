@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
@@ -63,6 +64,10 @@ namespace VocaDBRankings {
 			Console.WriteLine("Writing to " + file);
 
 			File.WriteAllText(file, html, System.Text.Encoding.UTF8);
+
+			var jsonFile = Path.Combine(folder, DateTime.Now.Year + "-" + weekNum + ".json");
+			var json = JsonConvert.SerializeObject(songs, Formatting.Indented);
+			File.WriteAllText(jsonFile, json, System.Text.Encoding.UTF8);
 
 		}
 
