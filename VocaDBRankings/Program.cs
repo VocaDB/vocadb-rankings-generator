@@ -20,11 +20,9 @@ namespace VocaDBRankings {
 
 	class Program {
 
-		static void Main(string[] args) {
+		private static SongForApiContract[] GetSongs(DateTime? dateTime) {
 
 			Console.WriteLine("Getting rankings from VocaDB.");
-
-			SongForApiContract[] songs;
 
 			using (var client = new HttpClient()) {
 
@@ -32,20 +30,27 @@ namespace VocaDBRankings {
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				var clientTask = client.GetAsync("api/songs/top-rated?filterBy=PublishDate&durationHours=168&fields=AdditionalNames,ThumbUrl,Tags,PVs");
+				var clientTask = client.GetAsync("api/songs/top-rated?filterBy=PublishDate&durationHours=168&languagePreference=English&fields=AdditionalNames,ThumbUrl,Tags,PVs&startDate=" + dateTime);
 				clientTask.Wait();
 				var response = clientTask.Result;
 				response.EnsureSuccessStatusCode();
 
 				var responseTask = response.Content.ReadAsAsync<SongForApiContract[]>();
 				responseTask.Wait();
-				songs = responseTask.Result;
+				return responseTask.Result;
 
 			}
 
+		}
+
+		static void Main(string[] args) {
+
+			var dateTime = args.Length > 1 ? (DateTime?)DateTime.Parse(args[1]) : null;
+			var songs = GetSongs(dateTime);
+
 			var topSongs = songs.Take(3);
 			var otherSongs = songs.Skip(3);
-			var weekNum = GetIso8601WeekOfYear(DateTime.Now);
+			var weekNum = GetIso8601WeekOfYear(dateTime ?? DateTime.Now);
 
 			Console.WriteLine("Generating document.");
 
@@ -59,7 +64,7 @@ namespace VocaDBRankings {
 			var html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
 
 			var folder = args.FirstOrDefault() ?? string.Empty;
-			var baseFileName = Path.Combine(folder, DateTime.Now.Year + "-" + weekNum);
+			var baseFileName = Path.Combine(folder, (dateTime ?? DateTime.Now).Year + "-" + weekNum);
 			var file = baseFileName + ".html";
 
 			Console.WriteLine("Writing to " + file);

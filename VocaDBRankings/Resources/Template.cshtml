@@ -38,6 +38,9 @@
 									<a href="http://vocadb.net/S/@song.Id">
 										@song.Name										
 									</a>
+									@if (!string.IsNullOrEmpty(song.AdditionalNames)) {
+										@:(@song.AdditionalNames)
+									}
 									<br />
 									@song.ArtistString
 									<br />
@@ -61,7 +64,7 @@
 						@foreach (SongForApiContract song in Model.OtherSongs) {
 						<tr>
 							<td width="30px">
-								<h1>@(System.Array.IndexOf(Model.OtherSongs, song) + 4)</h1>
+								<h2>@(System.Array.IndexOf(Model.OtherSongs, song) + 4)</h2>
 							</td>
 							<td width="80px">
 								<a href="http://vocadb.net/S/@song.Id">
@@ -72,6 +75,9 @@
 								<a href="http://vocadb.net/S/@song.Id">
 									@song.Name									
 								</a>
+								@if (!string.IsNullOrEmpty(song.AdditionalNames)) {
+									@:(@song.AdditionalNames)
+								}
 								<br />
 								@song.ArtistString
 								<br />
