@@ -5,9 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using HtmlAgilityPack;
 using Newtonsoft.Json;
 using RazorEngine;
 using RazorEngine.Configuration;
@@ -19,6 +16,17 @@ using VocaDBRankings.ViewModels;
 namespace VocaDBRankings {
 
 	class Program {
+
+		private static DateTime GetFirstDayOfWeek(DateTime dateTime) {
+
+			var firstDayOfWeek = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+			while (dateTime.DayOfWeek != firstDayOfWeek) {
+				dateTime = dateTime.AddDays(-1);
+			}
+
+			return dateTime;
+
+		}
 
 		private static SongForApiContract[] GetSongs(DateTime? dateTime) {
 
@@ -45,14 +53,14 @@ namespace VocaDBRankings {
 
 		static void Main(string[] args) {
 
-			var dateTime = args.Length > 1 ? (DateTime?)DateTime.Parse(args[1]) : null;
+			var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : GetFirstDayOfWeek(DateTime.Now).Date;
 			var songs = GetSongs(dateTime);
 
 			var topSongs = songs.Take(3);
 			var otherSongs = songs.Skip(3);
-			var weekNum = GetIso8601WeekOfYear(dateTime ?? DateTime.Now);
+			var weekNum = GetIso8601WeekOfYear(dateTime);
 
-			Console.WriteLine("Generating document.");
+			Console.WriteLine("Generating document for date " + dateTime.ToShortDateString() + ".");
 
 			var viewModel = new TemplateViewModel { TopRatedSongs = topSongs.ToArray(), OtherSongs = otherSongs.ToArray(), WeekNumber = weekNum };
 
@@ -64,7 +72,7 @@ namespace VocaDBRankings {
 			var html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
 
 			var folder = args.FirstOrDefault() ?? string.Empty;
-			var baseFileName = Path.Combine(folder, (dateTime ?? DateTime.Now).Year + "-" + weekNum);
+			var baseFileName = Path.Combine(folder, dateTime.Year + "-" + weekNum);
 			var file = baseFileName + ".html";
 
 			Console.WriteLine("Writing to " + file);
