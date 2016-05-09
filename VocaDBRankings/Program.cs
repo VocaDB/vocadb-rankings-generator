@@ -28,7 +28,7 @@ namespace VocaDBRankings {
 
 		}
 
-		private static SongForApiContract[] GetSongs(DateTime? dateTime) {
+		private static SongForApiContract[] GetSongs(DateTime dateTime) {
 
 			Console.WriteLine("Getting rankings from VocaDB.");
 
@@ -37,8 +37,8 @@ namespace VocaDBRankings {
 				client.BaseAddress = new Uri("http://vocadb.net/");
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				var clientTask = client.GetAsync("api/songs/top-rated?filterBy=PublishDate&durationHours=168&languagePreference=English&fields=AdditionalNames,ThumbUrl,Tags,PVs&startDate=" + dateTime);
+				
+				var clientTask = client.GetAsync("api/songs/top-rated?filterBy=PublishDate&durationHours=168&languagePreference=English&fields=AdditionalNames,ThumbUrl,Tags,PVs&startDate=" + dateTime.ToString("o"));
 				clientTask.Wait();
 				var response = clientTask.Result;
 				response.EnsureSuccessStatusCode();
@@ -53,7 +53,7 @@ namespace VocaDBRankings {
 
 		static void Main(string[] args) {
 
-			var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : GetFirstDayOfWeek(DateTime.Now).Date;
+			var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : GetFirstDayOfWeek(DateTime.Now.AddDays(-6)).Date;
 			var songs = GetSongs(dateTime);
 
 			var topSongs = songs.Take(3);
