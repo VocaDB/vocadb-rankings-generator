@@ -65,13 +65,11 @@ namespace VocaDBRankings {
 			var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : GetFirstDayOfWeek(DateTime.Now.AddDays(-6)).Date;
 			var songs = GetSongs(dateTime);
 
-			var topSongs = songs.Take(3);
-			var otherSongs = songs.Skip(3);
 			var weekNum = GetIso8601WeekOfYear(dateTime);
 
 			Console.WriteLine("Generating document for date " + dateTime.ToShortDateString() + " (week " + weekNum + ").");
 
-			var viewModel = new TemplateViewModel { TopRatedSongs = topSongs.ToArray(), OtherSongs = otherSongs.ToArray(), WeekNumber = weekNum };
+			var viewModel = new TemplateViewModel { Songs = songs, WeekNumber = weekNum };
 
 			var config = new TemplateServiceConfiguration();
 			config.CachingProvider = new DefaultCachingProvider(t => { });

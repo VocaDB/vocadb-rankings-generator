@@ -47,11 +47,17 @@ namespace VocaDBRankings.ViewModels {
 
 		}
 
-		public SongForApiContract[] OtherSongs { get; set; }
+		public IEnumerable<SongForApiContract> OtherSongs => Songs.Skip(3);
 
-		public SongForApiContract[] TopRatedSongs { get; set; }
+		public SongForApiContract[] Songs { get; set; }
+
+		public IEnumerable<SongForApiContract> TopRatedSongs => Songs.Take(3);
 
 		public int WeekNumber { get; set; }
+
+		public int GetSongPosition(SongForApiContract song) {
+			return Array.IndexOf(Songs, song) + 1;
+		}
 
 	}
 
