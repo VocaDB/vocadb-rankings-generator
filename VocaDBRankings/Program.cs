@@ -51,6 +51,15 @@ namespace VocaDBRankings {
 
 		}
 
+		private static string ReadTemplate() {
+
+			if (File.Exists("Template.cshtml"))
+				return File.ReadAllText("Template.cshtml");
+			else
+				return ResourceHelper.ReadTextFile("Template.cshtml");
+
+		}
+
 		static void Main(string[] args) {
 
 			var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : GetFirstDayOfWeek(DateTime.Now.AddDays(-6)).Date;
@@ -60,7 +69,7 @@ namespace VocaDBRankings {
 			var otherSongs = songs.Skip(3);
 			var weekNum = GetIso8601WeekOfYear(dateTime);
 
-			Console.WriteLine("Generating document for date " + dateTime.ToShortDateString() + ".");
+			Console.WriteLine("Generating document for date " + dateTime.ToShortDateString() + " (week " + weekNum + ").");
 
 			var viewModel = new TemplateViewModel { TopRatedSongs = topSongs.ToArray(), OtherSongs = otherSongs.ToArray(), WeekNumber = weekNum };
 
@@ -68,8 +77,15 @@ namespace VocaDBRankings {
 			config.CachingProvider = new DefaultCachingProvider(t => { });
 			var service = RazorEngineService.Create(config);
 			Engine.Razor = service;
-			var template = ResourceHelper.ReadTextFile("Template.cshtml");
-			var html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
+			var template = ReadTemplate();
+			string html;
+			try {
+				html = Engine.Razor.RunCompile(template, "rankingsTemplate", typeof(TemplateViewModel), viewModel);
+			} catch (TemplateCompilationException x) {
+				Console.WriteLine("Unable to compile Razor template: " + x.Message);
+				Console.ReadLine();
+				return;
+			}
 
 			var folder = args.FirstOrDefault() ?? string.Empty;
 			var baseFileName = Path.Combine(folder, dateTime.Year + "-" + weekNum);
