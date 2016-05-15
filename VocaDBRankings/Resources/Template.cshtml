@@ -22,70 +22,17 @@
 </head>
 <body>
 	<div class="container">
-		<h2>
-			Vocaloid/UTAU rankings for week @Model.WeekNumber (@Model.BeginDate.ToShortDateString() - @Model.EndDate.ToShortDateString())
-		</h2>
 		
-		<!-- old header position -->
-
-		<div class="row">
-			<div class="span7">
-				<table class="table">
-					<tbody>
-					
-					<tr>
-								
-								<td>
-									
-								</td>
-							
-							<td>
-								<h2><img src="http://puu.sh/oT0fS/7d1a245df1.png"></h2>
-								</td>
-							
-							<td>
-			<h2>						
-		<i>Vocaloid/UTAU rankings for week @Model.WeekNumber (@Model.BeginDate.ToShortDateString() - @Model.EndDate.ToShortDateString())</i>	
-		</h2>
-								</td>
-								
-							</tr>	
-							<tr>
-							
-						
-						@foreach (SongForApiContract song in Model.TopRatedSongs) {
-							<tr>
-							
-								<td width="30px">
-									<h1>@Model.GetSongPosition(song)</h1><h5><!-- score goes here --></h5>
-								</td>
-								<td width="140px">
-								<!-- date goes here -->
-								<br />
-									<a href="http://vocadb.net/S/@song.Id">
-										<img width="130" src="@song.ThumbUrl" />										
-									</a>
-								</td>
-								<td>
-									<a href="http://vocadb.net/S/@song.Id">
-										@song.Name										
-									</a>
-									@if (!string.IsNullOrEmpty(song.AdditionalNames)) {
-										@:(@song.AdditionalNames)
-									}
-									<br />
-									@song.ArtistString
-									<br />
-									@foreach (PVContract pv in Model.GetMainPVs(song)) {
-										<a href="@pv.Url" title="@pv.Service">
-											<img src="content/icons/@Model.GetServiceIcon(pv.Service)" />
-										</a>
-									}
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
+		<div class="row header">
+			<div class="col-md-12">
+				<div class="pull-left">
+					<img src="http://puu.sh/oT0fS/7d1a245df1.png">
+				</div>
+				<div class="pull-left">
+					<h2>
+						<i>Vocaloid/UTAU rankings for week @Model.WeekNumber (@Model.BeginDate.ToShortDateString() - @Model.EndDate.ToShortDateString())</i>
+					</h2>
+				</div>
 			</div>
 		</div>
 
@@ -93,33 +40,46 @@
 			<div class="span7">
 				<table class="table">
 					<tbody>
-						@foreach (SongForApiContract song in Model.OtherSongs) {
-						<tr>
-							<td width="30px">
-								<h2>@Model.GetSongPosition(song)</h2>
-							</td>
-							<td width="80px">
-								<a href="http://vocadb.net/S/@song.Id">
-									<img width="70" src="@song.ThumbUrl" />
-								</a>
-							</td>
-							<td>
-								<a href="http://vocadb.net/S/@song.Id">
-									@song.Name									
-								</a>
-								@if (!string.IsNullOrEmpty(song.AdditionalNames)) {
-									@:(@song.AdditionalNames)
-								}
-								<br />
-								@song.ArtistString
-								<br />
-								@foreach (PVContract pv in Model.GetMainPVs(song)) {
-									<a href="@pv.Url" title="@pv.Service">
-										<img src="content/icons/@Model.GetServiceIcon(pv.Service)" />
+						@foreach (SongForApiContract song in Model.Songs) {
+							int pos = Model.GetSongPosition(song);
+							<tr>							
+								<td width="30px">
+									@if (pos <= 3) {
+										<h1 class="ranking-pos">@pos</h1>
+									} else {
+										<h2 class="ranking-pos">@pos</h2>
+									}
+								</td>
+								<td width="140px">
+									<span class="publish-date">
+										<i class="glyphicon glyphicon-calendar"></i>
+										@(song.PublishDate.HasValue ? song.PublishDate.Value.ToShortDateString() : "")
+									</span>
+									<br />
+									<a href="http://vocadb.net/S/@song.Id">
+										<img width="@(pos <= 3 ? 130 : 70)" src="@song.ThumbUrl" />										
 									</a>
-								}
-							</td>
-						</tr>
+								</td>
+								<td>
+									<a href="http://vocadb.net/S/@song.Id" class="song-title">
+										@song.Name
+									</a>
+									@if (!string.IsNullOrEmpty(song.AdditionalNames)) {
+										@:(@song.AdditionalNames)
+									}
+									<br />
+									by @song.ArtistString
+									<br />
+									@foreach (PVContract pv in Model.GetMainPVs(song)) {
+										<a href="@pv.Url" title="@pv.Service">
+											<img src="content/icons/@Model.GetServiceIcon(pv.Service)" />
+										</a>
+									}
+									<p class="rating-score">
+										Rating score: @song.RatingScore
+									</p>
+								</td>
+							</tr>
 						}
 					</tbody>
 				</table>

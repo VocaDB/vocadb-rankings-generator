@@ -4,22 +4,45 @@ background:url('http://static.vocadb.net/img/b50d6437254c34d1b22d4adffacb60b3.jp
 
 }
 
-row, table {
-background-color:#fff;
-opacity: 0.90;
+.header {
+	margin: 10px -15px 10px -15px;	
+	padding: 10px;
+	border: 1px solid rgba(128, 128, 128, 0.5);
 }
 
-row:hover, td:hover {
-font-style:bold;
-text-decoration: underline;
+.header h2 {
+	font-size: 2rem;
+	line-height: 10px;
+	color: #144f4e;
+}
+
+.header, table {
+	background-color:#fff;
+	opacity: 0.90;
 }
 
 td {
-color:#144f4e;
+	color:#144f4e;
+}
 
- }
- 
-newheader {font-weight: normal;
-  line-height: 1;
-  color: #144f4e;
-  }
+.publish-date {
+	font-size: 1.1rem;
+}
+
+.song-title {
+	font-size: 1.6rem;
+	font-weight: bold;
+}
+
+.rating-score {
+	margin: 1rem 0 0 0;
+	font-size: 1.1rem;
+}
+
+.ranking-pos {
+	margin-left: 6px;
+}
+
+h1.ranking-pos {
+	font-size: 48px;
+}
