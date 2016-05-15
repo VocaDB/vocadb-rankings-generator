@@ -46,3 +46,13 @@ td {
 h1.ranking-pos {
 	font-size: 48px;
 }
+
+.footer {
+	color: white;
+	background-color: rgba(0, 0, 0, 0.4);
+	padding: 5px;
+}
+
+.footer a {
+	color: lightblue;
+}

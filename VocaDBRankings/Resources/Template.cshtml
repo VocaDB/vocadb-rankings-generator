@@ -22,7 +22,7 @@
 </head>
 <body>
 	<div class="container">
-		
+
 		<div class="row header">
 			<div class="col-md-12">
 				<div class="pull-left">
@@ -42,7 +42,7 @@
 					<tbody>
 						@foreach (SongForApiContract song in Model.Songs) {
 							int pos = Model.GetSongPosition(song);
-							<tr>							
+							<tr>
 								<td width="30px">
 									@if (pos <= 3) {
 										<h1 class="ranking-pos">@pos</h1>
@@ -57,7 +57,7 @@
 									</span>
 									<br />
 									<a href="http://vocadb.net/S/@song.Id">
-										<img width="@(pos <= 3 ? 130 : 70)" src="@song.ThumbUrl" />										
+										<img width="@(pos <= 3 ? 130 : 70)" src="@song.ThumbUrl" />
 									</a>
 								</td>
 								<td>
@@ -86,7 +86,10 @@
 			</div>
 		</div>
 
-		<small>Generated on @System.DateTime.UtcNow.ToString("g") GMT based on <a href="http://vocadb.net">VocaDB</a>.</small>
+		<small class="footer">
+			Generated on @System.DateTime.UtcNow.ToString("g") GMT based on <a href="http://vocadb.net">VocaDB</a>.
+			Picture from <a href="http://danbooru.donmai.us/posts/617406">http://danbooru.donmai.us/posts/617406</a>
+		</small>
 	</div>
 </body>
 </html>
