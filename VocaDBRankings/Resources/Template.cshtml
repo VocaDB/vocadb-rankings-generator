@@ -16,20 +16,43 @@
 </head>
 <body>
 	<div class="container">
-		<h2>
-			Vocaloid/UTAU rankings for week @Model.WeekNumber
-		</h2>
+		
+		<!-- old header position -->
 
 		<div class="row">
 			<div class="span7">
 				<table class="table">
 					<tbody>
+					
+					<tr>
+								
+								<td>
+									
+								</td>
+							
+							<td>
+								<h2><img src="http://puu.sh/oT0fS/7d1a245df1.png"></h2>
+								</td>
+							
+							<td>
+			<h2>						
+		<i>Vocaloid/UTAU rankings for week @Model.WeekNumber</i>	
+		</h2>
+								</td>
+								
+							</tr>	
+							<tr>
+							
+						
 						@foreach (SongForApiContract song in Model.TopRatedSongs) {
 							<tr>
+							
 								<td width="30px">
-									<h1>@(System.Array.IndexOf(Model.TopRatedSongs, song) + 1)</h1>
+									<h1>@(System.Array.IndexOf(Model.TopRatedSongs, song) + 1)</h1><h5><!-- score goes here --></h5>
 								</td>
 								<td width="140px">
+								<!-- date goes here -->
+								<br />
 									<a href="http://vocadb.net/S/@song.Id">
 										<img width="130" src="@song.ThumbUrl" />										
 									</a>

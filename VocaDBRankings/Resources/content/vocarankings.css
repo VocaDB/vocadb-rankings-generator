@@ -1,1 +1,25 @@
-﻿
+﻿html, body{
+background:url('http://static.vocadb.net/img/b50d6437254c34d1b22d4adffacb60b3.jpg') fixed;
+
+
+}
+
+row, table {
+background-color:#fff;
+opacity: 0.90;
+}
+
+row:hover, td:hover {
+font-style:bold;
+text-decoration: underline;
+}
+
+td {
+color:#144f4e;
+
+ }
+ 
+newheader {font-weight: normal;
+  line-height: 1;
+  color: #144f4e;
+  }
