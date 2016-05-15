@@ -69,7 +69,12 @@ namespace VocaDBRankings {
 
 			Console.WriteLine("Generating document for date " + dateTime.ToShortDateString() + " (week " + weekNum + ").");
 
-			var viewModel = new TemplateViewModel { Songs = songs, WeekNumber = weekNum };
+			var viewModel = new TemplateViewModel {
+				Songs = songs,
+				WeekNumber = weekNum,
+				BeginDate = dateTime,
+				EndDate = dateTime.AddDays(6)
+			};
 
 			var config = new TemplateServiceConfiguration();
 			config.CachingProvider = new DefaultCachingProvider(t => { });

@@ -47,6 +47,10 @@ namespace VocaDBRankings.ViewModels {
 
 		}
 
+		public DateTime BeginDate { get; set; }
+
+		public DateTime EndDate { get; set; }
+
 		public IEnumerable<SongForApiContract> OtherSongs => Songs.Skip(3);
 
 		public SongForApiContract[] Songs { get; set; }
