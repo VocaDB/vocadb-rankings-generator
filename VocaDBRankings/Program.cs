@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace VocaDBRankings {
 
 		}
 
-		private static SongForApiContract[] GetSongs(DateTime dateTime) {
+		private static SongForApiContract[] GetSongs(DateTime dateTime, bool monthly) {
 
 			Console.WriteLine("Getting rankings from VocaDB.");
 
@@ -37,8 +38,10 @@ namespace VocaDBRankings {
 				client.BaseAddress = new Uri("http://vocadb.net/");
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				
-				var clientTask = client.GetAsync("api/songs/top-rated?filterBy=PublishDate&durationHours=168&languagePreference=English&fields=AdditionalNames,ThumbUrl,Tags,PVs&startDate=" + dateTime.ToString("o"));
+
+				var durationHours = monthly ? 720 : 168;
+				var url = string.Format("api/songs/top-rated?filterBy=PublishDate&durationHours={0}&languagePreference=English&fields=AdditionalNames,ThumbUrl,Tags,PVs&startDate={1}", durationHours, dateTime.ToString("o"));
+				var clientTask = client.GetAsync(url);
 				clientTask.Wait();
 				var response = clientTask.Result;
 				response.EnsureSuccessStatusCode();
@@ -60,20 +63,31 @@ namespace VocaDBRankings {
 
 		}
 
+		private static string TargetFolder {
+			get {
+				return ConfigurationManager.AppSettings["TargetFolder"] ?? Directory.GetCurrentDirectory();
+			}
+		}
+
 		static void Main(string[] args) {
 
-			var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : GetFirstDayOfWeek(DateTime.Now.AddDays(-6)).Date;
-			var songs = GetSongs(dateTime);
+			var monthly = args.Length > 0 && string.Equals(args[0], "month", StringComparison.InvariantCultureIgnoreCase);
+			var now = DateTime.Now;
+			var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : (monthly ? new DateTime(now.Year, now.Month, 1) : GetFirstDayOfWeek(now.AddDays(-6)).Date);
+			var endDate = monthly ? new DateTime(dateTime.Year, dateTime.Month + 1, 1).AddDays(-1) : dateTime.AddDays(6);
 
-			var weekNum = GetIso8601WeekOfYear(dateTime);
+			var songs = GetSongs(dateTime, monthly);
 
-			Console.WriteLine("Generating document for date " + dateTime.ToShortDateString() + " (week " + weekNum + ").");
+			var weekOrMonth = monthly ? dateTime.Month : GetIso8601WeekOfYear(dateTime);
+
+			Console.WriteLine("Generating document for date " + dateTime.ToShortDateString() + " (" + (monthly ? "month" : "week") + " " + weekOrMonth + ").");
 
 			var viewModel = new TemplateViewModel {
 				Songs = songs,
-				WeekNumber = weekNum,
+				WeekOrMonthNumber = monthly ? CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(dateTime.Month) : weekOrMonth.ToString(),
 				BeginDate = dateTime,
-				EndDate = dateTime.AddDays(6)
+				EndDate = endDate,
+				Monthly = monthly
 			};
 
 			var config = new TemplateServiceConfiguration();
@@ -90,8 +104,8 @@ namespace VocaDBRankings {
 				return;
 			}
 
-			var folder = args.FirstOrDefault() ?? string.Empty;
-			var baseFileName = Path.Combine(folder, dateTime.Year + "-" + weekNum);
+			var folder = TargetFolder;
+			var baseFileName = Path.Combine(folder, dateTime.Year + "-" + weekOrMonth);
 			var file = baseFileName + ".html";
 
 			Console.WriteLine("Writing to " + file);

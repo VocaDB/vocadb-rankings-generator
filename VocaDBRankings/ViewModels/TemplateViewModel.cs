@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using VocaDBRankings.DataContracts;
 
@@ -51,13 +52,15 @@ namespace VocaDBRankings.ViewModels {
 
 		public DateTime EndDate { get; set; }
 
+		public bool Monthly { get; set; }
+
 		public IEnumerable<SongForApiContract> OtherSongs => Songs.Skip(3);
 
 		public SongForApiContract[] Songs { get; set; }
 
 		public IEnumerable<SongForApiContract> TopRatedSongs => Songs.Take(3);
 
-		public int WeekNumber { get; set; }
+		public string WeekOrMonthNumber { get; set; }
 
 		public int GetSongPosition(SongForApiContract song) {
 			return Array.IndexOf(Songs, song) + 1;

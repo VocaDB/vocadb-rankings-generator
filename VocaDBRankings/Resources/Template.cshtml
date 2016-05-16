@@ -2,13 +2,18 @@
 @using VocaDBRankings.DataContracts
 @inherits RazorEngine.Templating.TemplateBase<VocaDBRankings.ViewModels.TemplateViewModel>
 
+@{
+	string durationName = Model.Monthly ? Model.WeekOrMonthNumber : "week " + Model.WeekOrMonthNumber;
+	string durationRankings = Model.Monthly ? "Monthly" : "Weekly";
+}
+
 <!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
-	<meta name="description" content="Weekly Vocaloid/UTAU rankings generated from VocaDB" />
-	<title>Vocaloid/UTAU rankings for week @Model.WeekNumber</title>
+	<meta name="description" content="@durationRankings Vocaloid/UTAU rankings generated from VocaDB" />
+	<title>Vocaloid/UTAU rankings for @durationName</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="content/vocarankings.css" />
@@ -16,8 +21,8 @@
 	
 	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:site" content="@("@vocadb")" />
-	<meta name="twitter:title" content="Vocaloid/UTAU rankings for week @Model.WeekNumber" />
-	<meta name="twitter:description" content="Weekly rankings by VocaDB" />
+	<meta name="twitter:title" content="Vocaloid/UTAU rankings for @durationName" />
+	<meta name="twitter:description" content="@durationRankings rankings by VocaDB" />
 	<meta name="twitter:image" content="http://static.vocadb.net/img/2jfnf9x.png" />
 </head>
 <body>
@@ -30,7 +35,7 @@
 				</div>
 				<div class="pull-left">
 					<h2>
-						<i>Vocaloid/UTAU rankings for week @Model.WeekNumber (@Model.BeginDate.ToShortDateString() - @Model.EndDate.ToShortDateString())</i>
+						<i>Vocaloid/UTAU rankings for @durationName (@Model.BeginDate.ToShortDateString() - @Model.EndDate.ToShortDateString())</i>
 					</h2>
 				</div>
 			</div>
